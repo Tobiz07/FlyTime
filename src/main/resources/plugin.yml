@@ -1,0 +1,5 @@
+name: FlyTime
+version: '${project.version}'
+main: de.sh00ckbass.minecraft.flytime.FlyTime
+api-version: 1.16
+depend: [ Vault ]
