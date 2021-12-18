@@ -2,6 +2,7 @@ package de.sh00ckbass.minecraft.flytime.listener;
 
 import de.sh00ckbass.minecraft.flytime.FlyTime;
 import lombok.AllArgsConstructor;
+import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -29,6 +30,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onQuit(final PlayerQuitEvent event) {
+        if (event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+            event.getPlayer().setAllowFlight(false);
+            event.getPlayer().setFlying(false);
+        }
         this.plugin.getData().toggleFlying(event.getPlayer());
     }
 

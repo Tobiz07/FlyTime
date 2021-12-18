@@ -1,6 +1,7 @@
 package de.sh00ckbass.minecraft.flytime.util;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -34,7 +35,6 @@ public class Data {
             player.sendActionBar(Component.text());
             return false;
         }
-        player.sendActionBar(Component.text("§7Fly-Mode toggled"));
         this.flyingPlayers.add(player);
         return true;
     }
@@ -47,15 +47,15 @@ public class Data {
         return this.flyTimeOfPlayers.computeIfPresent(uuid, (uid, value) -> value + flyTime);
     }
 
-    public void removeFlyTime(final UUID uuid, final long flyTime) {
-        this.flyTimeOfPlayers.computeIfPresent(uuid, (uid, value) -> value - flyTime > 0 ? value - flyTime : 0);
+    public long removeFlyTime(final UUID uuid, final long flyTime) {
+        return this.flyTimeOfPlayers.computeIfPresent(uuid, (uid, value) -> value - flyTime > 0 ? value - flyTime : 0);
     }
 
     public void registerPlayer(final UUID uuid) {
         if (this.isRegistered(uuid)) {
             return;
         }
-        this.flyTimeOfPlayers.put(uuid, 86461L);
+        this.flyTimeOfPlayers.put(uuid, 0L);
     }
 
     public boolean isRegistered(final UUID uuid) {
@@ -63,7 +63,27 @@ public class Data {
     }
 
     public void onTick() {
-        this.flyTimeOfPlayers.forEach((uuid, flyTime) -> this.removeFlyTime(uuid, 1));
+        this.flyTimeOfPlayers.forEach((uuid, flyTime) -> {
+            final long remainingFlyTime = this.removeFlyTime(uuid, 1);
+            if (remainingFlyTime == 0) {
+                final Player player = Bukkit.getPlayer(uuid);
+                if (player == null) {
+                    return;
+                }
+                player.setAllowFlight(false);
+                player.setFlying(false);
+                player.sendMessage(Component.text("§7Fly disabled. You don't have any remaining Flytime."));
+                this.flyingPlayers.remove(player);
+            }
+        });
+    }
+
+    public HashMap<UUID, Long> getFlyTimeOfPlayers() {
+        return (HashMap<UUID, Long>) this.flyTimeOfPlayers;
+    }
+
+    public void loadPlayer(final UUID uuid, final long flyTime) {
+        this.flyTimeOfPlayers.put(uuid, flyTime);
     }
 
 }
