@@ -7,7 +7,8 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import de.sh00ckbass.minecraft.flytime.FlyTime;
-import de.sh00ckbass.minecraft.flytime.util.Data;
+import de.sh00ckbass.minecraft.flytime.config.Config;
+import de.sh00ckbass.minecraft.flytime.data.Data;
 import org.bukkit.entity.Player;
 
 /*******************************************************
@@ -26,23 +27,25 @@ public class FlyCommand extends BaseCommand {
 
     private final FlyTime plugin;
     private final Data data;
+    private final Config config;
 
     public FlyCommand(final FlyTime plugin) {
         this.plugin = plugin;
         this.data = plugin.getData();
+        this.config = plugin.getPluginConfig();
     }
 
     @Default
     public void fly(final Player player) {
         if (this.data.getFlyTime(player.getUniqueId()) == 0) {
-            player.sendMessage("§7You don't have any Fly time.");
+            player.sendMessage(this.config.getNoFlyTime());
             return;
         }
-        if (this.data.toggleFlying(player)) {
-            player.sendMessage("§7Fly activated.");
+        if (this.data.toggleFly(player)) {
+            player.sendMessage(this.config.getFlyActivated());
             player.setAllowFlight(true);
         } else {
-            player.sendMessage("§7Fly disabled.");
+            player.sendMessage(this.config.getFlyDisabled());
             player.setFlying(false);
             player.setAllowFlight(false);
         }
@@ -62,13 +65,11 @@ public class FlyCommand extends BaseCommand {
             case "min":
                 time = time * 60;
                 break;
-            case "sec":
-                break;
         }
         this.data.removeFlyTime(target.getUniqueId(), time);
         final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(time, "§e", "§7", false);
-        player.sendMessage("§7You removed " + formattedTime + "Fly time from §e" + target.getName() + "§7.");
-        target.sendMessage("§7From your Fly time were " + formattedTime + "removed.");
+        player.sendMessage(this.config.getRemovedTimePlayer().replace("{time}", formattedTime).replace("{name}", target.getName()));
+        target.sendMessage(this.config.getRemovedTimeTarget().replace("{time}", formattedTime));
     }
 
     @Subcommand("addTime")
@@ -85,13 +86,11 @@ public class FlyCommand extends BaseCommand {
             case "min":
                 time = time * 60;
                 break;
-            case "sec":
-                break;
         }
         this.data.addFlyTime(target.getUniqueId(), time);
         final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(time, "§e", "§7", false);
-        player.sendMessage("§7You added " + formattedTime + "Fly time to §e" + target.getName() + "§7.");
-        target.sendMessage("§7You received " + formattedTime + "Fly time.");
+        player.sendMessage(this.config.getAddedTimePlayer().replace("{time}", formattedTime).replace("{name}", target.getName()));
+        target.sendMessage(this.config.getAddedTimeTarget().replace("{time}", formattedTime));
     }
 
     @Subcommand("buy")
@@ -107,24 +106,23 @@ public class FlyCommand extends BaseCommand {
             case "min":
                 time = time * 60;
                 break;
-            case "sec":
-                break;
         }
         final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(time, "§e", "§7", false);
-        if (!this.plugin.getEconomy().has(player, 20 * time)) {
-            player.sendMessage("§7You don't have enough Money to buy " + formattedTime + "Fly time. You need $§e" + 20 * time + "§7");
+        final int moneyNeeded = 20 * time;
+        if (!this.plugin.getEconomy().has(player, moneyNeeded)) {
+            player.sendMessage(this.config.getNotEnoughMoney().replace("{time}", formattedTime).replace("{money}", String.valueOf(moneyNeeded)));
             return;
         }
         this.data.addFlyTime(player.getUniqueId(), time);
-        this.plugin.getEconomy().withdrawPlayer(player, 20 * time);
-        player.sendMessage("§7You bought " + formattedTime + "Fly time for $§e" + 20 * time);
+        this.plugin.getEconomy().withdrawPlayer(player, moneyNeeded);
+        player.sendMessage(this.config.getSuccessfullyBought().replace("{time}", formattedTime).replace("{money}", String.valueOf(moneyNeeded)));
     }
 
     @Subcommand("gettime")
     public void getTime(final Player player) {
         final long flyTime = this.plugin.getData().getFlyTime(player.getUniqueId());
         final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(flyTime, "§e", "§7", true);
-        player.sendMessage("§7You have " + formattedTime + "Fly time left.");
+        player.sendMessage(this.config.getTimeLeft().replace("{time}", formattedTime));
     }
 
 }

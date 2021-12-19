@@ -1,4 +1,4 @@
-package de.sh00ckbass.minecraft.flytime.util;
+package de.sh00ckbass.minecraft.flytime.data;
 
 import de.sh00ckbass.minecraft.flytime.FlyTime;
 
@@ -39,10 +39,10 @@ public class DataLoader {
     }
 
     public void save() {
-        final HashMap<UUID, Long> flyTime = this.plugin.getData().getFlyTimeOfPlayers();
+        final HashMap<UUID, FlyPlayer> flyTime = this.plugin.getData().getFlyTimeOfPlayers();
 
         for (final UUID uuid : flyTime.keySet()) {
-            final String queryString = "INSERT OR REPLACE INTO flytime (uuid, flytime) VALUES (\"" + uuid.toString() + "\", " + flyTime.get(uuid) + ")";
+            final String queryString = "INSERT OR REPLACE INTO flytime (uuid, flytime) VALUES (\"" + uuid.toString() + "\", " + flyTime.get(uuid).getFlyTime() + ")";
             this.plugin.getSql().onUpdate(queryString);
         }
     }

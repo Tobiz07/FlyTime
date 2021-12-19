@@ -18,16 +18,19 @@ import org.bukkit.entity.Player;
 public class ThreadManager {
 
     private final FlyTime plugin;
+    private final String actionBar;
 
     public ThreadManager(final FlyTime plugin) {
         this.plugin = plugin;
+        this.actionBar = plugin.getPluginConfig().getActionBar();
     }
 
     public void startActionBarThread() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this.plugin, () -> {
             for (final Player player : Bukkit.getOnlinePlayers()) {
                 if (this.plugin.getData().isFlying(player)) {
-                    player.sendActionBar(Component.text(this.plugin.getFlyTimeManager().getFormattedFlyTime(player.getUniqueId())));
+                    player.sendActionBar(Component.text(this.actionBar.replace("{time}",
+                            this.plugin.getFlyTimeManager().getFormattedFlyTime(player.getUniqueId()))));
                     this.plugin.getData().onTick();
                 }
             }

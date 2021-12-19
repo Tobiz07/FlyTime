@@ -34,7 +34,7 @@ public class PlayerListener implements Listener {
             event.getPlayer().setAllowFlight(false);
             event.getPlayer().setFlying(false);
         }
-        this.plugin.getData().toggleFlying(event.getPlayer());
+        this.plugin.getData().toggleFly(event.getPlayer());
     }
 
 }

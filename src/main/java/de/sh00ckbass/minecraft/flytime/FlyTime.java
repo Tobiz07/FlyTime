@@ -4,13 +4,16 @@ import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.CommandCompletions;
 import co.aikar.commands.PaperCommandManager;
 import de.sh00ckbass.minecraft.flytime.commands.FlyCommand;
+import de.sh00ckbass.minecraft.flytime.config.Config;
+import de.sh00ckbass.minecraft.flytime.config.ConfigLoader;
+import de.sh00ckbass.minecraft.flytime.data.Data;
+import de.sh00ckbass.minecraft.flytime.data.DataLoader;
 import de.sh00ckbass.minecraft.flytime.listener.PlayerListener;
-import de.sh00ckbass.minecraft.flytime.util.Data;
-import de.sh00ckbass.minecraft.flytime.util.DataLoader;
 import de.sh00ckbass.minecraft.flytime.util.FlyTimeManager;
 import de.sh00ckbass.minecraft.flytime.util.LiteSQL;
 import de.sh00ckbass.minecraft.flytime.util.ThreadManager;
 import lombok.Getter;
+import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -37,22 +40,26 @@ public final class FlyTime extends JavaPlugin {
     @Getter
     private final Data data;
     @Getter
-    private final ThreadManager threadManager;
+    private ThreadManager threadManager;
     @Getter
     private final LiteSQL sql;
     @Getter
-    private Economy economy;
-    @Getter
     private final FlyTimeManager flyTimeManager;
-    private PaperCommandManager commandManager;
     private final DataLoader loader;
+    private final ConfigLoader configLoader;
+    @Getter
+    private Economy economy;
+    private PaperCommandManager commandManager;
+    @Getter
+    @Setter
+    private Config pluginConfig;
 
     public FlyTime() {
-        this.data = new Data();
-        this.threadManager = new ThreadManager(this);
+        this.data = new Data(this);
         this.sql = new LiteSQL(this);
         this.flyTimeManager = new FlyTimeManager(this);
         this.loader = new DataLoader(this);
+        this.configLoader = new ConfigLoader(this);
     }
 
     @Override
@@ -65,12 +72,16 @@ public final class FlyTime extends JavaPlugin {
         if (!this.getDataFolder().exists()) {
             this.getDataFolder().mkdir();
         }
+        this.configLoader.load();
+        
+        this.threadManager = new ThreadManager(this);
+
         this.commandManager = new PaperCommandManager(this);
+        this.registerCommandCompletion();
         this.sql.connect();
         this.sql.onUpdate("CREATE TABLE IF NOT EXISTS flytime (uuid VARCHAR(50) PRIMARY KEY, flytime BIGINT(50))");
         this.threadManager.startActionBarThread();
         this.registerListener();
-        this.registerCommandCompletion();
         this.loader.load();
         //Commands
         this.commandManager.registerCommand(new FlyCommand(this));

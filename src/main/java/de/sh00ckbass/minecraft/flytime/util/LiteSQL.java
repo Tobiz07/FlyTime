@@ -30,7 +30,7 @@ public class LiteSQL {
 
     public void connect() {
         try {
-            final File file = new File(this.plugin.getDataFolder(), "datenbank.db");
+            final File file = new File(this.plugin.getDataFolder(), "database.db");
             if (!file.exists()) {
                 file.createNewFile();
             }

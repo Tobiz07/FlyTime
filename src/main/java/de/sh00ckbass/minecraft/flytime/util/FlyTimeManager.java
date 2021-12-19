@@ -1,6 +1,7 @@
 package de.sh00ckbass.minecraft.flytime.util;
 
 import de.sh00ckbass.minecraft.flytime.FlyTime;
+import de.sh00ckbass.minecraft.flytime.data.Data;
 
 import java.util.UUID;
 
@@ -16,11 +17,9 @@ import java.util.UUID;
 
 public class FlyTimeManager {
 
-    //private final FlyTime plugin;
     private final Data data;
 
     public FlyTimeManager(final FlyTime plugin) {
-        //this.plugin = plugin;
         this.data = plugin.getData();
     }
 
@@ -32,7 +31,7 @@ public class FlyTimeManager {
         return this.getFormattedTime(playerFlyTime, "§e", "§7", true);
     }
 
-    public String getFormattedTime(long seconds, final String numberColor, final String timeUnitColor, final boolean show0Seconds) {
+    public String getFormattedTime(long seconds, final String numberColor, final String timeUnitColor, final boolean showZeroSeconds) {
         int minutes = (int) (seconds / 60);
         int hours = (minutes / 60);
         final int days = hours / 24;
@@ -67,7 +66,7 @@ public class FlyTimeManager {
                 minStr = numberColor + minutes + timeUnitColor + " Minute";
             }
         }
-        if (show0Seconds) {
+        if (showZeroSeconds) {
             if (seconds != 1) {
                 secStr = numberColor + seconds + timeUnitColor + " Seconds";
             } else {
@@ -94,9 +93,7 @@ public class FlyTimeManager {
             formattedStringBuilder.append(minStr).append(" ");
         }
         if (secStr != null) {
-            if (minutes == 0 && hours == 0 && days == 0) {
-                formattedStringBuilder.append(secStr).append(" ");
-            }
+            formattedStringBuilder.append(secStr).append(" ");
         }
 
 

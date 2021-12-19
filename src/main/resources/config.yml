@@ -1,0 +1,24 @@
+# Price per second fly time
+price: 20
+# Set to false, if you want that fly time is always reduced
+onlyInAir: true
+
+# Messages
+noFlyTime: "&7You don't have any fly time."
+flyActivated: "&7Fly activated."
+flyDisabled: "&7Fly disabled."
+
+removedTimePlayer: "&7You removed {time}fly time from &e{name}&7."
+removedTimeTarget: "&7From your fly time were {time}removed."
+
+addedTimePlayer: "&7You added {time}fly time to &e{name}&7."
+addedTimeTarget: "&7You received {time}fly time."
+
+notEnoughMoney: "&7You don't have enough Money to buy {time}fly time. You need $&e{money}&7"
+successfullyBought: "&7You bought {time}fly time for $&e{money}"
+
+timeLeft: "&7You have {time}fly time left."
+
+flyDisabledNoMoreTime: "&7Fly disabled because you run out of fly time"
+
+actionBar: "{time}"
