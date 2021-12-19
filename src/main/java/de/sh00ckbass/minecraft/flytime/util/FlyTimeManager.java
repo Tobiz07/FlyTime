@@ -16,11 +16,11 @@ import java.util.UUID;
 
 public class FlyTimeManager {
 
-    private final FlyTime plugin;
+    //private final FlyTime plugin;
     private final Data data;
 
     public FlyTimeManager(final FlyTime plugin) {
-        this.plugin = plugin;
+        //this.plugin = plugin;
         this.data = plugin.getData();
     }
 
@@ -29,44 +29,58 @@ public class FlyTimeManager {
         if (playerFlyTime == 0) {
             return "0 Seconds";
         }
-        final int seconds = (int) (playerFlyTime % 60);
-        int minutes = (int) (playerFlyTime / 60);
+        return this.getFormattedTime(playerFlyTime, "§e", "§7", true);
+    }
+
+    public String getFormattedTime(long seconds, final String numberColor, final String timeUnitColor, final boolean show0Seconds) {
+        int minutes = (int) (seconds / 60);
         int hours = (minutes / 60);
         final int days = hours / 24;
 
         hours = (hours % 24);
         minutes = (minutes % 60);
+        seconds = (seconds % 60);
 
         String dayStr = null;
         String hourStr = null;
         String minStr = null;
-        final String secStr;
+        String secStr = null;
 
         if (days != 0) {
             if (days != 1) {
-                dayStr = days + " Days";
+                dayStr = numberColor + days + timeUnitColor + " Days";
             } else {
-                dayStr = days + " Day";
+                dayStr = numberColor + days + timeUnitColor + " Day";
             }
         }
         if (hours != 0) {
             if (hours != 1) {
-                hourStr = hours + " Hours";
+                hourStr = numberColor + hours + timeUnitColor + " Hours";
             } else {
-                hourStr = hours + " Hour";
+                hourStr = numberColor + hours + timeUnitColor + " Hour";
             }
         }
         if (minutes != 0) {
             if (minutes != 1) {
-                minStr = minutes + " Minutes";
+                minStr = numberColor + minutes + timeUnitColor + " Minutes";
             } else {
-                minStr = minutes + " Minute";
+                minStr = numberColor + minutes + timeUnitColor + " Minute";
             }
         }
-        if (seconds != 1) {
-            secStr = seconds + " Seconds";
+        if (show0Seconds) {
+            if (seconds != 1) {
+                secStr = numberColor + seconds + timeUnitColor + " Seconds";
+            } else {
+                secStr = numberColor + seconds + timeUnitColor + " Second";
+            }
         } else {
-            secStr = seconds + " Second";
+            if (seconds != 0) {
+                if (seconds != 1) {
+                    secStr = numberColor + seconds + timeUnitColor + " Seconds";
+                } else {
+                    secStr = numberColor + seconds + timeUnitColor + " Second";
+                }
+            }
         }
 
         final StringBuilder formattedStringBuilder = new StringBuilder();
@@ -79,7 +93,11 @@ public class FlyTimeManager {
         if (minStr != null) {
             formattedStringBuilder.append(minStr).append(" ");
         }
-        formattedStringBuilder.append(secStr);
+        if (secStr != null) {
+            if (minutes == 0 && hours == 0 && days == 0) {
+                formattedStringBuilder.append(secStr).append(" ");
+            }
+        }
 
 
         return formattedStringBuilder.toString();

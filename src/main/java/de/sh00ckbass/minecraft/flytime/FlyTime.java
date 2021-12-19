@@ -96,8 +96,11 @@ public final class FlyTime extends JavaPlugin {
             }
             return playerNames;
         });
-        commandCompletions.registerAsyncCompletion("ints", c -> {
-            return Arrays.asList("10", "100", "3600", "86400");
+        commandCompletions.registerAsyncCompletion("time", c -> {
+            return Arrays.asList("1", "10", "30", "60", "24");
+        });
+        commandCompletions.registerAsyncCompletion("timeunits", c -> {
+            return Arrays.asList("sec", "min", "hour", "day");
         });
     }
 

@@ -50,32 +50,81 @@ public class FlyCommand extends BaseCommand {
 
     @Subcommand("removeTime")
     @CommandPermission("flytime.admin.removeTime")
-    @CommandCompletion("@ints @onlineplayers")
-    public void removeTime(final Player player, final int time, final Player target) {
+    @CommandCompletion("@time @timeunits @onlineplayers")
+    public void removeTime(final Player player, int time, final String timeUnit, final Player target) {
+        switch (timeUnit) {
+            case "day":
+                time = time * 60 * 60 * 24;
+                break;
+            case "hour":
+                time = time * 60 * 60;
+                break;
+            case "min":
+                time = time * 60;
+                break;
+            case "sec":
+                break;
+        }
         this.data.removeFlyTime(target.getUniqueId(), time);
-        player.sendMessage("§7You removed §e" + time + "§7 Seconds Fly time from §e" + target.getName() + "§7.");
-        target.sendMessage("§7From your Fly time were §e" + time + "§7 Seconds removed.");
+        final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(time, "§e", "§7", false);
+        player.sendMessage("§7You removed " + formattedTime + "Fly time from §e" + target.getName() + "§7.");
+        target.sendMessage("§7From your Fly time were " + formattedTime + "removed.");
     }
 
     @Subcommand("addTime")
     @CommandPermission("flytime.admin.removeTime")
-    @CommandCompletion("@ints @onlineplayers")
-    public void addTime(final Player player, final int time, final Player target) {
+    @CommandCompletion("@time @timeunits @onlineplayers")
+    public void addTime(final Player player, int time, final String timeUnit, final Player target) {
+        switch (timeUnit) {
+            case "day":
+                time = time * 60 * 60 * 24;
+                break;
+            case "hour":
+                time = time * 60 * 60;
+                break;
+            case "min":
+                time = time * 60;
+                break;
+            case "sec":
+                break;
+        }
         this.data.addFlyTime(target.getUniqueId(), time);
-        player.sendMessage("§7You added §e" + time + "§7 Seconds Fly time to §e" + target.getName() + "§7.");
-        target.sendMessage("§7You received §e" + time + "§7 Seconds Fly time.");
+        final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(time, "§e", "§7", false);
+        player.sendMessage("§7You added " + formattedTime + "Fly time to §e" + target.getName() + "§7.");
+        target.sendMessage("§7You received " + formattedTime + "Fly time.");
     }
 
     @Subcommand("buy")
-    @CommandCompletion("@ints")
-    public void buyTime(final Player player, final int time) {
+    @CommandCompletion("@time @timeunits")
+    public void buyTime(final Player player, int time, final String timeUnit) {
+        switch (timeUnit) {
+            case "day":
+                time = time * 60 * 60 * 24;
+                break;
+            case "hour":
+                time = time * 60 * 60;
+                break;
+            case "min":
+                time = time * 60;
+                break;
+            case "sec":
+                break;
+        }
+        final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(time, "§e", "§7", false);
         if (!this.plugin.getEconomy().has(player, 20 * time)) {
-            player.sendMessage("§7You don't have enough Money to buy §e" + time + "§7 Seconds Fly time. You need $§e" + 20 * time + "§7");
+            player.sendMessage("§7You don't have enough Money to buy " + formattedTime + "Fly time. You need $§e" + 20 * time + "§7");
             return;
         }
         this.data.addFlyTime(player.getUniqueId(), time);
         this.plugin.getEconomy().withdrawPlayer(player, 20 * time);
-        player.sendMessage("§7You bought §e" + time + "§7 Seconds Fly time for $§e" + 20 * time);
+        player.sendMessage("§7You bought " + formattedTime + "Fly time for $§e" + 20 * time);
+    }
+
+    @Subcommand("gettime")
+    public void getTime(final Player player) {
+        final long flyTime = this.plugin.getData().getFlyTime(player.getUniqueId());
+        final String formattedTime = this.plugin.getFlyTimeManager().getFormattedTime(flyTime, "§e", "§7", true);
+        player.sendMessage("§7You have " + formattedTime + "Fly time left.");
     }
 
 }

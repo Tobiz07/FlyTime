@@ -72,7 +72,7 @@ public class Data {
                 }
                 player.setAllowFlight(false);
                 player.setFlying(false);
-                player.sendMessage(Component.text("§7Fly disabled. You don't have any remaining Flytime."));
+                player.sendMessage(Component.text("§7Fly disabled. You don't have any remaining Fly time."));
                 this.flyingPlayers.remove(player);
             }
         });
