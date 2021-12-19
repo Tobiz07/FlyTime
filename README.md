@@ -1,6 +1,7 @@
 # FlyTime
 
 This Paper plugin allows players to buy flight time
+[Spigot download](https://www.spigotmc.org/resources/flytime.98496/)
 
 ## Notes
 
