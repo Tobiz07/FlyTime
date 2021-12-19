@@ -51,8 +51,8 @@ public class FlyCommand extends BaseCommand {
         }
     }
 
-    @Subcommand("removeTime")
-    @CommandPermission("flytime.admin.removeTime")
+    @Subcommand("removetime")
+    @CommandPermission("flytime.admin.removetime")
     @CommandCompletion("@time @timeunits @onlineplayers")
     public void removeTime(final Player player, int time, final String timeUnit, final Player target) {
         switch (timeUnit) {
@@ -72,8 +72,8 @@ public class FlyCommand extends BaseCommand {
         target.sendMessage(this.config.getRemovedTimeTarget().replace("{time}", formattedTime));
     }
 
-    @Subcommand("addTime")
-    @CommandPermission("flytime.admin.removeTime")
+    @Subcommand("addtime")
+    @CommandPermission("flytime.admin.addtime")
     @CommandCompletion("@time @timeunits @onlineplayers")
     public void addTime(final Player player, int time, final String timeUnit, final Player target) {
         switch (timeUnit) {
